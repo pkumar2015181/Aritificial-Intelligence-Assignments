@@ -1,0 +1,19 @@
+For N-queens problem code:
+   1. Open "Code" folder
+   2. Open "N-queens problem" folder
+   3. Run "TestLocalSearch.py" file using below command in cmd
+      command: python3 TestLocalSearch.py
+   4. Give required parameters for output
+
+
+For Tic-tac-toe game:
+   1. Open "Code" folder
+   2. Open "Tic-tac-toe game" folder
+   3. Run required implementated code file using python in cmd
+      For minimax: python3 TTT_minimax.py
+      For minimax with alpha-beta pruning: python3 TTT_alphaBetaPruning.py
+      For minimax with heuristic: python3 TTT_heuristic.py
+      For game between two game agents: python3 TTT_heuristic_2agents.py
+	  
+For Report:
+    Open "Report" folder
