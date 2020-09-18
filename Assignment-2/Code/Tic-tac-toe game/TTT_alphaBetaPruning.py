@@ -1,0 +1,480 @@
+import numpy as np
+from random import randint
+import time
+
+class TicTacToe:
+    def __init__(self):
+        # EMPTY BOARD
+        # 0 MEANS BLANK
+        #print("Board for tic tac toe game\n")
+#        self.board = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+        self.board = [[2, 0, 2, 2], [1, 0, 1, 2], [1, 2, 1, 1], [2, 1, 0, 0]]
+        self.curr_player = 1
+        self.explored_nodes = 1
+    
+    # TO DISPLAY CURRENT STATE POSITION
+    def show_board(self):
+        print("\n")
+        for i in range(4):
+            for j in range(4):
+                print("| ", end='')
+                if self.board[i][j] == 0:
+                    print("  ", end='')
+                elif self.board[i][j] == 1:
+                    print("X ", end='')
+                else:
+                    print("O ", end='')
+            print("|\n")
+    
+    # # TO CHECK GAME OVER CON
+    # def gameover(self):
+    #     for i in range(4):
+    #         for j in range(4):
+    #             if self.board[i][j] == 0:
+    #                 return False
+    #     return True
+            
+    # def chance_winning(self, state, player):
+    #     count = 0
+    #     diag_l1 = 0
+    #     diag_l2 = 0
+    #     diag_r1 = 0
+    #     diag_r2 = 0
+    #     for i in range(4):
+    #         row_1 = 0
+    #         row_2 = 0
+    #         col_1 = 0
+    #         col_2 = 0
+    #         for j in range(4):
+    #             if state[i][j] == 1:
+    #                 row_1 = row_1 + 1
+    #             elif state[i][j] == 2:
+    #                 row_2 = row_2 + 1
+                
+    #             if state[j][i] == 1:
+    #                 col_1 = col_1 + 1
+    #             elif state[j][i] == 2:
+    #                 col_2 = col_2 + 1
+    #         if player == 1 and row_1 > 0 and row_2 == 0:
+    #             count = count + 1
+    #         if player == 2 and row_2 > 0 and row_1 == 0:
+    #             count = count + 1
+            
+    #         if player == 1 and col_1 > 0 and col_2 == 0:
+    #             count = count + 1
+    #         if player == 2 and col_2 > 0 and col_1 == 0:
+    #             count = count + 1
+            
+    #         if row_1 == 0 and row_2 == 0:
+    #             count = count + 1
+    #         if col_1 == 0 and col_2 == 0:
+    #             count = count + 1
+            
+    #         if state[i][i] == 1:
+    #             diag_l1 = diag_l1 + 1
+    #         elif state[i][i] == 2:
+    #             diag_l2 = diag_l2 + 1
+            
+    #         if state[i][3-i] == 1:
+    #             diag_r1 = diag_r1 + 1
+    #         elif state[i][3-i] == 2:
+    #             diag_r2 = diag_r2 + 1
+        
+    #     if player == 1 and diag_l1 > 0 and diag_l2 == 0:
+    #         count = count + 1
+    #     if player == 2 and diag_l2 > 0 and diag_l1 == 0:
+    #         count = count + 1
+        
+    #     if diag_l1 == 0 and diag_l2 == 0:
+    #         count = count + 1
+    #     if diag_r1 == 0 and diag_r2 == 0:
+    #         count = count + 1
+            
+    #     if player == 1 and diag_r1 > 0 and diag_r2 == 0:
+    #         count = count + 1
+    #     if player == 2 and diag_r2 > 0 and diag_r1 == 0:
+    #         count = count + 1
+        
+        
+    #     return count
+            
+            
+    
+    # CHECK WHO WIN THE GAME
+    def check_win(self, board):
+        for i in range(4):
+            #FOR PLAYER 1
+            #check for rows
+            if board[i][0] == 1 and board[i][1] == 1 and board[i][2] == 1 and board[i][3] == 1:
+                return 1
+            #check for column
+            if board[0][i] == 1 and board[1][i] == 1 and board[2][i] == 1 and board[3][i] == 1:
+                return 1
+            
+            #FOR PLAYER 2
+            #check for rows
+            if board[i][0] == 2 and board[i][1] == 2 and board[i][2] == 2 and board[i][3] == 2:
+                return 2
+            #check for column
+            if board[0][i] == 2 and board[1][i] == 2 and board[2][i] == 2 and board[3][i] == 2:
+                return 2
+        #FOR PLAYER 1
+        #check left diagonal
+        if board[0][0] == 1 and board[1][1] == 1 and board[2][2] == 1 and board[3][3] == 1:
+            return 1
+        #check for right diagonal
+        if board[0][3] == 1 and board[1][2] == 1 and board[2][1] == 1 and board[3][0] == 1:
+            return 1
+        
+        #FOR PLAYER 2
+        #check left diagonal
+        if board[0][0] == 2 and board[1][1] == 2 and board[2][2] == 2 and board[3][3] == 2:
+            return 2
+        #check for right diagonal
+        if board[0][3] == 2 and board[1][2] == 2 and board[2][1] == 2 and board[3][0] == 2:
+            return 2
+        return 0
+    
+    # CHECK WEATHER STATE IS TERMINAL STATE OR NOT
+    def check_leaf_state(self, board):
+        for i in range(4):
+            #FOR PLAYER 1
+            #check for rows
+            if board[i][0] == 1 and board[i][1] == 1 and board[i][2] == 1 and board[i][3] == 1:
+                return True
+            #check for column
+            if board[0][i] == 1 and board[1][i] == 1 and board[2][i] == 1 and board[3][i] == 1:
+                return True
+            
+            #FOR PLAYER 2
+            #check for rows
+            if board[i][0] == 2 and board[i][1] == 2 and board[i][2] == 2 and board[i][3] == 2:
+                return True
+            #check for column
+            if board[0][i] == 2 and board[1][i] == 2 and board[2][i] == 2 and board[3][i] == 2:
+                return True
+        #FOR PLAYER 1
+        #check left diagonal
+        if board[0][0] == 1 and board[1][1] == 1 and board[2][2] == 1 and board[3][3] == 1:
+            return True
+        #check for right diagonal
+        if board[0][3] == 1 and board[1][2] == 1 and board[2][1] == 1 and board[3][0] == 1:
+            return True
+        
+        #FOR PLAYER 2
+        #check left diagonal
+        if board[0][0] == 2 and board[1][1] == 2 and board[2][2] == 2 and board[3][3] == 2:
+            return True
+        #check for right diagonal
+        if board[0][3] == 2 and board[1][2] == 2 and board[2][1] == 2 and board[3][0] == 2:
+            return True
+        
+        for i in range(4):
+            for j in range(4):
+                if board[i][j] == 0:
+                    return False
+        return True
+    
+    # RETURN ALL POSSIBLE MOVE STATES
+    def getpossiblemoves(self, state, player):
+        current = []
+        for i in range(4):
+            for j in range(4):
+                current.append(state[i][j])
+        moves = []
+        for i in range(16):
+            if current[i] == 0:
+                pre = current.copy()
+                pre[i] = player
+                new_state = np.reshape(pre, (4,4)).tolist()
+                #print(new_state)
+                moves.append(new_state)
+        return moves
+    
+    # RETURN BEST MOVE
+    def getbestmove(self, state, player, alpha, beta):
+#        print("\n\nstate = ", state, " ply = ", player)
+        
+        # FOR TERMINAL STATE
+        if self.check_leaf_state(state) == True:
+#            print("Terminal state")
+            # CHANGE STATE TO TUPLE
+            current = []
+            for i in range(4):
+                for j in range(4):
+                    current.append(state[i][j])
+            best_moves = {'alpha': alpha, 'beta': beta}
+            win_player = self.check_win(state)
+#            print("Winner player = ", win_player)
+            if win_player == 0:
+                best_moves[tuple(current)] = 0
+                
+                # FOR MAX NODE
+                if self.curr_player != player:
+                    if best_moves['alpha'] < 0:
+                        best_moves['alpha'] = 0
+                # FOR MIN NODE
+                else:
+                    if best_moves['beta'] > 0:
+                        best_moves['beta'] = 0
+                
+            elif win_player == 1:
+                # MAX NODE
+                if self.curr_player == 1:
+#                    print("C1")
+                    best_moves[tuple(current)] = 1
+                    if best_moves['alpha'] < 1:
+                        best_moves['alpha'] = 1
+                # MIN NODE
+                else:
+#                    print("C2")
+                    best_moves[tuple(current)] = -1
+                    if best_moves['beta'] > -1:
+                        best_moves['beta'] = -1
+            elif win_player == 2:
+                # MIN NODE
+                if self.curr_player == 1:
+#                    print("C3")
+                    best_moves[tuple(current)] = -1
+                    if best_moves['beta'] > -1:
+                        best_moves['beta'] = -1
+                # MAX NODE
+                else:
+#                    print("C4")
+                    best_moves[tuple(current)] = 1
+                    if best_moves['alpha'] < 1:
+                        best_moves['alpha'] = 1
+#            print("Best move = ", best_moves)
+            return best_moves
+        # FOR NON-TERMINAL STATE
+        else:
+            possible_moves = self.getpossiblemoves(state, player)
+#            print("Possible moves = ", possible_moves)
+#            print("No. of moves = ", len(possible_moves))
+            best_moves = {'alpha': alpha, 'beta': beta}
+            pos_best_val = float('-Inf')
+            neg_best_val = float('Inf')
+            no_states = len(possible_moves)
+            state_no = 0
+            prune = 0
+            while no_states > 0 and prune == 0:
+                self.explored_nodes = self.explored_nodes + 1
+                next_state = possible_moves[state_no]
+                no_states = no_states - 1
+                state_no = state_no + 1
+                curr = []
+                for i in range(4):
+                    for j in range(4):
+                        curr.append(state[i][j])
+                if player == 1:
+                    down_move = self.getbestmove(next_state, 2, best_moves['alpha'], best_moves['beta'])
+                else:
+                    down_move = self.getbestmove(next_state, 1, best_moves['alpha'], best_moves['beta'])
+                
+#                print("\nStart --> ---------------------------------")
+#                print("\nReturned value of alpha = ", down_move['alpha'], " and beta = ", down_move['beta'])
+#                print("state = ", state)
+#                print("player = ", player)
+#                print("Curr player = ", self.curr_player)
+#                print("End --> ---------------------------------\n")
+                
+                for m in down_move:
+                    if m == 'alpha':
+#                        print("X1")
+#                        print("alpha = ", best_moves['alpha'], " and beta = ", best_moves['beta'])
+                        # MAX NODE
+                        if player == self.curr_player and best_moves['alpha'] < down_move['alpha']:
+#                            print("X2")
+                            best_moves['alpha'] = down_move['alpha']
+#                            print("alpha = ", best_moves['alpha'], " and beta = ", best_moves['beta'])
+                        
+                        # MIN NODE
+                        # if player != self.curr_player and best_moves['beta'] > down_move['alpha']:
+                        #     print("X3")
+                        #     best_moves['beta'] = down_move['alpha']
+                        #     print("alpha = ", best_moves['alpha'], " and beta = ", best_moves['beta'])
+                    if m == 'beta':
+#                        print("X4")
+#                        print("alpha = ", best_moves['alpha'], " and beta = ", best_moves['beta'])
+                        # MAX NODE
+                        # if player == self.curr_player and best_moves['alpha'] < down_move['beta']:
+                        #     print("X5")
+                        #     best_moves['alpha'] = down_move['beta']
+                        #     print("alpha = ", best_moves['alpha'], " and beta = ", best_moves['beta'])
+                        
+                        # MIN NODE
+                        if player != self.curr_player and best_moves['beta'] > down_move['beta']:
+#                            print("X6")
+                            best_moves['beta'] = down_move['beta']
+#                            print("alpha = ", best_moves['alpha'], " and beta = ", best_moves['beta'])
+                    if m != 'alpha' and m != 'beta':
+                        val = down_move[m]
+                        # CHOOSE MAXIMUM VALUE STATE
+                        if player == self.curr_player:
+                            if val > pos_best_val:
+                                temp_alpha = best_moves['alpha']
+                                temp_beta = best_moves['beta']
+                                best_moves.clear()
+                                best_moves['alpha'] = temp_alpha
+                                best_moves['beta'] = temp_beta
+                                pos_best_val = val
+                                board = []
+                                for i in range(4):
+                                    for j in range(4):
+                                        board.append(self.board[i][j])
+                                if curr == board:
+#                                    print("========")
+                                    best_moves[m] = val
+                                else:
+                                    best_moves[tuple(curr)] = val
+                                
+                            elif val == pos_best_val:
+                                board = []
+                                for i in range(4):
+                                    for j in range(4):
+                                        board.append(self.board[i][j])
+                                if curr == board:
+#                                    print("========")
+                                    best_moves[m] = val
+                                else:
+                                    best_moves[tuple(curr)] = val
+                        # CHOOSE MINIMUM VALUE STATE
+                        else:
+                            if val < neg_best_val:
+                                temp_alpha = best_moves['alpha']
+                                temp_beta = best_moves['beta']
+                                best_moves.clear()
+                                best_moves['alpha'] = temp_alpha
+                                best_moves['beta'] = temp_beta
+                                neg_best_val = val
+                                board = []
+                                for i in range(4):
+                                    for j in range(4):
+                                        board.append(self.board[i][j])
+                                if curr == board:
+#                                    print("========")
+                                    best_moves[m] = val
+                                else:
+                                    best_moves[tuple(curr)] = val
+                                
+                            elif val == neg_best_val:
+                                board = []
+                                for i in range(4):
+                                    for j in range(4):
+                                        board.append(self.board[i][j])
+                                if curr == board:
+#                                    print("========")
+                                    best_moves[m] = val
+                                else:
+                                    best_moves[tuple(curr)] = val
+                
+                if best_moves['alpha'] >= best_moves['beta']:
+#                    print("\n\n+++++++++_________________++++++++++++++\n\n")
+                    prune = 1
+            
+            if best_moves['beta'] > pos_best_val:
+                best_moves['beta'] = pos_best_val
+            
+            if best_moves['alpha'] < neg_best_val:
+                best_moves['alpha'] = neg_best_val
+            
+#            print("\nstate = ", state, " ply = ", player)
+#            print("Non-terminal state")
+#            print("Best moves = ", best_moves)
+            
+            # CHOOSE RANDOM MOVE FROM ALL BEST MOVES
+            total_moves = len(best_moves)
+            if total_moves == 3:
+                return best_moves
+            else:
+                rand_move = {}
+                states = []
+                s = 0
+                for m in best_moves:
+                    if m == 'alpha' or m == 'beta':
+                        rand_move[m] = best_moves[m]
+                    else:
+                        s = s+1
+                        states.append(m)
+                
+                
+                
+                # print("\n========================\n")
+                # next_sta = None
+                # ch = float('Inf')
+                # for st in states:
+                #     mat = np.reshape(st, (4,4)).tolist()
+                #     print("mat = ", mat)
+                #     if player == 1:
+                #         print("C1")
+                #         if ch > self.chance_winning(mat, 2):
+                #             print("C2")
+                #             next_sta = st
+                #     if player == 2:
+                #         print("C3");
+                #         if ch > self.chance_winning(mat, 1):
+                #             print("C4")
+                #             next_sta = st
+                
+                # rand_move[next_sta] = best_moves[next_sta]
+                # print("Rand move = ", rand_move)
+                
+                # print("\n========================\n")
+                # return rand_move
+                
+                rand_no = randint(0, s-1)
+#                print("states = ", states)
+#                print("s = ", s)
+#                print("rand no = ", rand_no)
+                rand_move[states[rand_no]] = best_moves[states[rand_no]]
+#                print("Rand move = ", rand_move)
+                return rand_move
+  
+
+# MAIN FUNCTION
+if __name__ == '__main__':
+    game = TicTacToe()
+    player = 1
+    #depth = int(input("Enter depth of search: "))
+    
+    # CHECK GAME IS OVER OR NOT
+    while game.check_leaf_state(game.board) == False:
+        game.show_board()
+        if player == 1:
+            print("Player - 1")
+            game.curr_player = 1
+            start_time = time.time()
+            alpha = float('-Inf')
+            beta = float('Inf')
+            down_move = game.getbestmove(game.board,1,alpha,beta)
+#            print(down_move)
+            for m in down_move:
+                if m != 'alpha' and m != 'beta':
+                    game.board = np.reshape(m, (4,4)).tolist()
+            print("\nTime taken for 1 move =  %s seconds" % (time.time() - start_time)) 
+            print("No. of explored nodes = ", game.explored_nodes)
+            game.explored_nodes = 0
+            player = 2
+        else:
+            print("Player - 2")
+            game.curr_player = 2
+            flag = 1
+            while flag == 1:
+                move = int(input("You are O: Choose blank tile from board between 1-16 (left to right and top to bottom): "))
+                move = move - 1
+                if game.board[int(move/4)][move%4] == 0:
+                    game.board[int(move/4)][move%4] = 2
+                    flag = 0
+                else:
+                    print("Invalid Position! Choosen tile is not blank. Choose another tile")
+            
+            player = 1
+    
+    game.show_board()
+    win_player = game.check_win(game.board)
+    if win_player == 0:
+        print("Match is draw")
+    elif win_player == 1:
+        print("Player 1 wins")
+    else:
+        print("Player 2 wins")
